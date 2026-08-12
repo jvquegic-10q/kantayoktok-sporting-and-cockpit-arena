@@ -200,6 +200,6 @@ $html .= "
 
 // Output as file download
 header('Content-Type: text/html; charset=utf-8');
-header('Content-Disposition: attachment; filename="Sabong-Daily-Report-' . $today . '.html"');
+header('Content-Disposition: attachment; filename="Kantayoktok-Daily-Report-' . $today . '.html"');
 echo $html;
 ?>

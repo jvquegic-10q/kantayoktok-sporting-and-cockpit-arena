@@ -1,5 +1,5 @@
 {
-  "name": "kantayoktok-sporting-and-cockpit-arena",
+  "name": "kantayoktok",
   "version": "1.0.0",
   "description": "Kantayoktok Sporting and Cockpit Arena Daily Monitoring System",
   "main": "main.js",
@@ -8,7 +8,7 @@
     "build": "electron-builder"
   },
   "build": {
-    "appId": "com.kantayoktok.sabong",
+    "appId": "com.kantayoktok.arena",
     "productName": "Kantayoktok Sporting and Cockpit Arena",
     "win": {
       "target": [
@@ -19,6 +19,7 @@
   "keywords": [
     "kantayoktok",
     "cockpit",
+    "arena",
     "monitoring"
   ],
   "author": "Kantayoktok",

@@ -84,6 +84,6 @@ $csv .= "40% Share," . number_format($closing['barangay_share'], 2) . "\n";
 
 // Output as Excel file
 header('Content-Type: text/csv; charset=utf-8');
-header('Content-Disposition: attachment; filename="Sabong-Daily-Report-' . $today . '.csv"');
+header('Content-Disposition: attachment; filename="Kantayoktok-Daily-Report-' . $today . '.csv"');
 echo $csv;
 ?>
