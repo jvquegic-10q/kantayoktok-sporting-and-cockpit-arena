@@ -1,0 +1,117 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1d3557 35%, #d4af37 100%);
+}
+
+.login-container {
+    background: rgba(255,255,255,0.96);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+h1 {
+    text-align: center;
+    color: var(--navy-900);
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--navy-700);
+    margin-bottom: 2rem;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(114, 28, 36, 0.15);
+}
+
+.login-form input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    border-radius: 10px;
+    font-size: 16px;
+    background: #fff;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+    color: var(--navy-900);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 800;
+    box-shadow: 0 8px 18px rgba(212, 175, 55, 0.25);
+}
+
+.demo-accounts {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1.5rem;
+    font-size: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.demo-accounts h4 {
+    margin-bottom: 0.75rem;
+    color: var(--navy-900);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.demo-account {
+    margin: 0.5rem 0;
+    padding: 0.65rem 0.75rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    margin-right: 0.5rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.role-guard { background: #d9f7e8; color: #1e7e34; }
+.role-cashier { background: #fff3cd; color: #8a6d00; }
+.role-admin { background: rgba(20, 33, 61, 0.10); color: var(--navy-900); }
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 1.25rem;
+        margin: 1rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+}

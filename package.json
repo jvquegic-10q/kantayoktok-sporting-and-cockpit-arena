@@ -1,0 +1,31 @@
+{
+  "name": "kantayoktok-sporting-and-cockpit-arena",
+  "version": "1.0.0",
+  "description": "Kantayoktok Sporting and Cockpit Arena Daily Monitoring System",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.kantayoktok.sabong",
+    "productName": "Kantayoktok Sporting and Cockpit Arena",
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
+  },
+  "keywords": [
+    "kantayoktok",
+    "cockpit",
+    "monitoring"
+  ],
+  "author": "Kantayoktok",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "27.0.0",
+    "electron-builder": "26.0.0"
+  }
+}
