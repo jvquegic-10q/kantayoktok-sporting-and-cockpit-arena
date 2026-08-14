@@ -371,11 +371,11 @@ $history_summary = getDailySummaryForDate($selected_date);
     }
 
     function exportPDF() {
-        window.open('export_pdf.php', '_blank');
+        window.location.href = 'export_pdf.php';
     }
 
     function exportExcel() {
-        window.open('export_excel.php', '_blank');
+        window.location.href = 'export_excel.php';
     }
 
     function resetDemoData() {

@@ -10,6 +10,7 @@ app.on('ready', () => {
         height: 900,
         minWidth: 1000,
         minHeight: 700,
+        title: 'Kantayoktok Sporting and Cockpit Arena',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
@@ -17,6 +18,8 @@ app.on('ready', () => {
         },
         icon: path.join(__dirname, 'icon.png')
     });
+
+    mainWindow.setTitle('Kantayoktok Sporting and Cockpit Arena');
 
     // Load your PHP app from localhost
     mainWindow.loadURL('http://localhost/sabong-new/index.php');

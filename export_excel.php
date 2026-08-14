@@ -9,22 +9,6 @@ $closing = getTodayClosingSummary();
 $today = date('Y-m-d');
 $formatted_date = date('F d, Y');
 
-// Create CSV content
-$csv = "KANTAYOKTOK SPORTING AND COCKPIT ARENA DAILY MONITORING REPORT\n";
-$csv .= "Date: " . $formatted_date . "\n";
-$csv .= "Generated: " . date('Y-m-d H:i:s') . "\n\n";
-
-// HEADCOUNT
-$csv .= "ATTENDANCE / HEADCOUNT\n";
-$csv .= "Metric,Count\n";
-$csv .= "Total People Entered," . $headcount['entries'] . "\n";
-$csv .= "Total People Exited," . $headcount['exits'] . "\n";
-$csv .= "Currently Inside Venue," . $headcount['inside'] . "\n\n";
-
-// INCOME
-$csv .= "INCOME BREAKDOWN\n";
-$csv .= "Category,Amount\n";
-
 $income_labels = [
     'sultada' => 'Sultada (Bet)',
     'pulta' => 'Pulta (Wristband/Entry)',
@@ -34,17 +18,6 @@ $income_labels = [
     'space_rental' => 'Space Rental',
     'other' => 'Other Income'
 ];
-
-foreach ($income_labels as $key => $label) {
-    $amount = $financials['income'][$key] ?? 0;
-    $csv .= "\"" . $label . "\"," . number_format($amount, 2) . "\n";
-}
-
-$csv .= "TOTAL INCOME," . number_format($financials['total_income'], 2) . "\n\n";
-
-// EXPENSES
-$csv .= "EXPENSE BREAKDOWN\n";
-$csv .= "Category,Amount\n";
 
 $expense_labels = [
     'amusement_tax' => 'Amusement Tax (10%)',
@@ -58,32 +31,166 @@ $expense_labels = [
     'promo' => 'Promo'
 ];
 
-foreach ($expense_labels as $key => $label) {
-    $amount = $financials['expenses'][$key] ?? 0;
-    $csv .= "\"" . $label . "\"," . number_format($amount, 2) . "\n";
+$style = "
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; color: #111; }
+        table { border-collapse: collapse; width: 100%; font-size: 12px; }
+        th, td { border: 1px solid #333; padding: 6px 8px; vertical-align: top; }
+        .title { font-size: 22px; font-weight: bold; text-align: left; }
+        .header-row { background: #f5d94d; font-weight: bold; }
+        .subhead { background: #9bd3ff; font-weight: bold; }
+        .section { background: #d7f0ff; font-weight: bold; }
+        .muted { color: #555; }
+        .amount { text-align: right; }
+        .total { background: #f5d94d; font-weight: bold; }
+        .footer { font-weight: bold; text-align: center; padding-top: 12px; }
+    </style>
+";
+
+$html = "
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Kantayoktok Sporting and Cockpit Arena Daily Monitoring Report</title>
+    {$style}
+</head>
+<body>
+    <table>
+        <tr>
+            <td colspan='3' class='title'>KANTAYOKTOK SPORTING AND COCKPIT ARENA</td>
+        </tr>
+        <tr>
+            <td colspan='3' class='muted'>Daily Monitoring Report</td>
+        </tr>
+        <tr>
+            <td class='header-row'>Date</td>
+            <td colspan='2'>{$formatted_date}</td>
+        </tr>
+        <tr>
+            <td class='header-row'>Generated</td>
+            <td colspan='2'>" . date('Y-m-d H:i:s') . "</td>
+        </tr>
+    </table>
+    <br>
+
+    <table>
+        <tr class='section'>
+            <td colspan='3'>ATTENDANCE / HEADCOUNT</td>
+        </tr>
+        <tr class='subhead'>
+            <th>Metric</th>
+            <th>Count</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>Total People Entered</td>
+            <td class='amount'>{$headcount['entries']}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Total People Exited</td>
+            <td class='amount'>{$headcount['exits']}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Currently Inside Venue</td>
+            <td class='amount'>{$headcount['inside']}</td>
+            <td></td>
+        </tr>
+    </table>
+    <br>
+
+    <table>
+        <tr class='section'>
+            <td colspan='3'>INCOME BREAKDOWN</td>
+        </tr>
+        <tr class='subhead'>
+            <th>Category</th>
+            <th>Amount</th>
+            <th></th>
+        </tr>
+";
+
+foreach ($income_labels as $key => $label) {
+    $amount = $financials['income'][$key] ?? 0;
+    $html .= "<tr><td>{$label}</td><td class='amount'>₱" . number_format($amount, 2) . "</td><td></td></tr>";
 }
 
-$csv .= "TOTAL EXPENSES," . number_format($financials['total_expenses'], 2) . "\n\n";
+$html .= "
+        <tr class='total'>
+            <td>Total Income</td>
+            <td class='amount'>₱" . number_format($financials['total_income'], 2) . "</td>
+            <td></td>
+        </tr>
+    </table>
+    <br>
 
-// SUMMARY
-$csv .= "FINANCIAL SUMMARY\n";
-$csv .= "Gross Cash," . number_format($closing['gross_cash'], 2) . "\n";
-$csv .= "Total Expenses," . number_format($closing['total_expenses'], 2) . "\n";
-$csv .= "NET INCOME," . number_format($closing['net_income'], 2) . "\n\n";
+    <table>
+        <tr class='section'>
+            <td colspan='3'>EXPENSE BREAKDOWN</td>
+        </tr>
+        <tr class='subhead'>
+            <th>Category</th>
+            <th>Amount</th>
+            <th></th>
+        </tr>
+";
 
-// DAILY CLOSING
-$csv .= "DAILY CLOSING REPORT\n";
-$csv .= "Organizer Share (60%)," . number_format($closing['organizer_share'], 2) . "\n";
-$csv .= "Barangay Share (40%)," . number_format($closing['barangay_share'], 2) . "\n";
-$csv .= "Status," . ucfirst($closing['status']) . "\n\n";
+foreach ($expense_labels as $key => $label) {
+    $amount = $financials['expenses'][$key] ?? 0;
+    $html .= "<tr><td>{$label}</td><td class='amount'>₱" . number_format($amount, 2) . "</td><td></td></tr>";
+}
 
-// DISTRIBUTION
-$csv .= "DISTRIBUTION\n";
-$csv .= "60% Share," . number_format($closing['organizer_share'], 2) . "\n";
-$csv .= "40% Share," . number_format($closing['barangay_share'], 2) . "\n";
+$html .= "
+        <tr class='total'>
+            <td>Total Expenses</td>
+            <td class='amount'>₱" . number_format($financials['total_expenses'], 2) . "</td>
+            <td></td>
+        </tr>
+    </table>
+    <br>
 
-// Output as Excel file
-header('Content-Type: text/csv; charset=utf-8');
-header('Content-Disposition: attachment; filename="Kantayoktok-Daily-Report-' . $today . '.csv"');
-echo $csv;
+    <table>
+        <tr class='section'>
+            <td colspan='3'>FINANCIAL SUMMARY</td>
+        </tr>
+        <tr>
+            <td>Gross Cash</td>
+            <td class='amount'>₱" . number_format($closing['gross_cash'], 2) . "</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Total Expenses</td>
+            <td class='amount'>₱" . number_format($closing['total_expenses'], 2) . "</td>
+            <td></td>
+        </tr>
+        <tr class='total'>
+            <td>Net Income</td>
+            <td class='amount'>₱" . number_format($closing['net_income'], 2) . "</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Organizer Share (60%)</td>
+            <td class='amount'>₱" . number_format($closing['organizer_share'], 2) . "</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Barangay Share (40%)</td>
+            <td class='amount'>₱" . number_format($closing['barangay_share'], 2) . "</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td colspan='2'>" . ucfirst($closing['status']) . "</td>
+        </tr>
+    </table>
+    <div class='footer'>Prepared by: Kantayoktok Management</div>
+</body>
+</html>
+";
+
+header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+header('Content-Disposition: attachment; filename="Kantayoktok-Daily-Report-' . $today . '.xls"');
+echo $html;
 ?>

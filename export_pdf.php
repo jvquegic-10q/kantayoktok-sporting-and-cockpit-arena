@@ -9,75 +9,6 @@ $closing = getTodayClosingSummary();
 $today = date('Y-m-d');
 $formatted_date = date('F d, Y');
 
-// Generate HTML content
-$html = "
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset='UTF-8'>
-    <title>Kantayoktok Sporting and Cockpit Arena Daily Report</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
-        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-        h1 { margin: 0; color: #333; }
-        .subtitle { color: #666; font-size: 14px; }
-        .date { color: #666; font-size: 12px; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th { background: #f0f0f0; padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: bold; }
-        td { padding: 10px; border: 1px solid #ddd; }
-        .amount { text-align: right; }
-        .total-row { background: #f9f9f9; font-weight: bold; }
-        .section-title { font-size: 14px; font-weight: bold; color: #333; margin-top: 20px; margin-bottom: 10px; background: #f0f0f0; padding: 5px; }
-        .summary-section { margin: 20px 0; }
-        .summary-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ddd; }
-        .summary-label { font-weight: bold; }
-        .summary-value { text-align: right; font-weight: bold; }
-        .profit-section { background: #fffbf0; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .distribution { display: flex; justify-content: space-around; margin: 15px 0; }
-        .dist-item { text-align: center; }
-        .dist-label { font-size: 12px; color: #666; }
-        .dist-value { font-size: 20px; font-weight: bold; color: #ffc107; }
-    </style>
-</head>
-<body>
-    <div class='header'>
-        <h1>🐓 Kantayoktok Sporting and Cockpit Arena - Daily Monitoring Report</h1>
-        <div class='subtitle'>Complete Financial & Attendance Summary</div>
-        <div class='date'>Date: " . $formatted_date . "</div>
-    </div>
-
-    <!-- HEADCOUNT SECTION -->
-    <div class='summary-section'>
-        <div class='section-title'>📊 ATTENDANCE / HEADCOUNT</div>
-        <table>
-            <tr>
-                <th>Metric</th>
-                <th class='amount'>Count</th>
-            </tr>
-            <tr>
-                <td>Total People Entered</td>
-                <td class='amount'>" . $headcount['entries'] . "</td>
-            </tr>
-            <tr>
-                <td>Total People Exited</td>
-                <td class='amount'>" . $headcount['exits'] . "</td>
-            </tr>
-            <tr class='total-row'>
-                <td>Currently Inside Venue</td>
-                <td class='amount'>" . $headcount['inside'] . "</td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- INCOME SECTION -->
-    <div class='summary-section'>
-        <div class='section-title'>💵 INCOME BREAKDOWN</div>
-        <table>
-            <tr>
-                <th>Category</th>
-                <th class='amount'>Amount</th>
-            </tr>";
-
 $income_labels = [
     'sultada' => 'Sultada (Bet)',
     'pulta' => 'Pulta (Wristband/Entry)',
@@ -87,28 +18,6 @@ $income_labels = [
     'space_rental' => 'Space Rental',
     'other' => 'Other Income'
 ];
-
-foreach ($income_labels as $key => $label) {
-    $amount = $financials['income'][$key] ?? 0;
-    $html .= "<tr><td>$label</td><td class='amount'>₱" . number_format($amount, 2) . "</td></tr>";
-}
-
-$html .= "
-            <tr class='total-row'>
-                <td>TOTAL INCOME</td>
-                <td class='amount'>₱" . number_format($financials['total_income'], 2) . "</td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- EXPENSE SECTION -->
-    <div class='summary-section'>
-        <div class='section-title'>📉 EXPENSE BREAKDOWN</div>
-        <table>
-            <tr>
-                <th>Category</th>
-                <th class='amount'>Amount</th>
-            </tr>";
 
 $expense_labels = [
     'amusement_tax' => 'Amusement Tax (10%)',
@@ -122,83 +31,191 @@ $expense_labels = [
     'promo' => 'Promo'
 ];
 
+$html = "
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Kantayoktok Sporting and Cockpit Arena | Daily Monitoring Report</title>
+    <style>
+        @page { size: A4 portrait; margin: 14mm; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #111;
+            background: #fff;
+        }
+        .sheet {
+            width: 100%;
+            max-width: 780px;
+            margin: 0 auto;
+            border: 2px solid #111;
+            padding: 0;
+            background: #fff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #111;
+            padding: 6px 8px;
+            vertical-align: top;
+            text-align: left;
+        }
+        .title-bar {
+            background: #f4d748;
+            font-weight: bold;
+            font-size: 15px;
+            text-align: center;
+            min-height: 36px;
+        }
+        .sub-title {
+            background: #5db9eb;
+            font-weight: bold;
+            text-align: center;
+        }
+        .section-title {
+            background: #f3d65d;
+            font-weight: bold;
+            text-align: left;
+        }
+        .blue-row { background: #9dd9f9; }
+        .light-row { background: #f5f5f5; }
+        .muted { color: #333; }
+        .amount { text-align: right; }
+        .net { background: #f4d748; font-weight: bold; }
+        .signature { text-align: center; padding-top: 20px; font-weight: bold; }
+        .small { font-size: 11px; }
+        .right-box {
+            width: 42%;
+            vertical-align: top;
+            border-left: 2px solid #111;
+        }
+    </style>
+</head>
+<body>
+    <div class='sheet'>
+        <table>
+            <tr>
+                <td class='title-bar' style='width: 35%;'>DATE</td>
+                <td class='title-bar' style='width: 30%;'>KANTAYOKTOK</td>
+                <td class='title-bar' style='width: 35%;'>DAILY MONITORING</td>
+            </tr>
+            <tr>
+                <td class='sub-title' style='font-size: 11px;'>" . date('d-M') . "</td>
+                <td class='sub-title' style='font-size: 11px;'>" . $formatted_date . "</td>
+                <td class='sub-title' style='font-size: 11px;'>" . date('Y') . "</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class='section-title'>
+                <td colspan='3'>BEGINNING BALANCE (PREVIOUS DAY'S COH)</td>
+            </tr>
+            <tr>
+                <td>Sultada Net</td>
+                <td class='amount'>₱" . number_format($financials['income']['sultada'] ?? 0, 2) . "</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Pulta</td>
+                <td class='amount'>₱" . number_format($financials['income']['pulta'] ?? 0, 2) . "</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Cash Balanced</td>
+                <td class='amount'>₱" . number_format($closing['gross_cash'] ?? 0, 2) . "</td>
+                <td></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class='section-title'>
+                <td colspan='3'>EXPENSES</td>
+            </tr>
+";
+
 foreach ($expense_labels as $key => $label) {
     $amount = $financials['expenses'][$key] ?? 0;
-    $html .= "<tr><td>$label</td><td class='amount'>₱" . number_format($amount, 2) . "</td></tr>";
+    $html .= "<tr><td>{$label}</td><td class='amount'>₱" . number_format($amount, 2) . "</td><td></td></tr>";
 }
 
 $html .= "
-            <tr class='total-row'>
-                <td>TOTAL EXPENSES</td>
+            <tr class='net'>
+                <td>Total Expenses</td>
                 <td class='amount'>₱" . number_format($financials['total_expenses'], 2) . "</td>
+                <td></td>
             </tr>
         </table>
-    </div>
 
-    <!-- FINANCIAL SUMMARY -->
-    <div class='profit-section'>
-        <div class='section-title'>📈 FINANCIAL SUMMARY</div>
-        <div class='summary-row'>
-            <span class='summary-label'>Gross Cash:</span>
-            <span class='summary-value'>₱" . number_format($closing['gross_cash'], 2) . "</span>
-        </div>
-        <div class='summary-row'>
-            <span class='summary-label'>Total Expenses:</span>
-            <span class='summary-value'>₱" . number_format($closing['total_expenses'], 2) . "</span>
-        </div>
-        <div class='summary-row' style='border-bottom: 3px solid #333; font-size: 16px;'>
-            <span class='summary-label'>NET INCOME:</span>
-            <span class='summary-value' style='color: #ffc107;'>₱" . number_format($closing['net_income'], 2) . "</span>
-        </div>
-    </div>
-
-    <!-- DAILY CLOSING -->
-    <div class='summary-section'>
-        <div class='section-title'>📌 DAILY CLOSING REPORT</div>
         <table>
-            <tr>
-                <th>Item</th>
-                <th class='amount'>Amount</th>
+            <tr class='section-title'>
+                <td colspan='3'>INCOME</td>
+            </tr>
+";
+
+foreach ($income_labels as $key => $label) {
+    $amount = $financials['income'][$key] ?? 0;
+    $html .= "<tr><td>{$label}</td><td class='amount'>₱" . number_format($amount, 2) . "</td><td></td></tr>";
+}
+
+$html .= "
+            <tr class='net'>
+                <td>Total Income</td>
+                <td class='amount'>₱" . number_format($financials['total_income'], 2) . "</td>
+                <td></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class='section-title'>
+                <td colspan='3'>DISTRIBUTION</td>
             </tr>
             <tr>
-                <td>Organizer Share (60%)</td>
+                <td>60% Kantayoktok</td>
                 <td class='amount'>₱" . number_format($closing['organizer_share'], 2) . "</td>
+                <td></td>
             </tr>
             <tr>
-                <td>Barangay Share (40%)</td>
+                <td>40% Brgy. Inapaka</td>
                 <td class='amount'>₱" . number_format($closing['barangay_share'], 2) . "</td>
+                <td></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr class='net'>
+                <td>NET INCOME</td>
+                <td class='amount'>₱" . number_format($closing['net_income'], 2) . "</td>
             </tr>
             <tr>
-                <td>Status</td>
-                <td class='amount'>" . ucfirst($closing['status']) . "</td>
+                <td colspan='2' class='signature'>ALENA OLANO</td>
+            </tr>
+            <tr>
+                <td colspan='2' class='small signature'>(OIC)</td>
+            </tr>
+            <tr>
+                <td colspan='2' class='signature' style='padding-top: 18px;'>AUTHORIZED SIGNATURE</td>
+            </tr>
+            <tr>
+                <td colspan='2' class='small signature'>(LIQUIDATOR)</td>
             </tr>
         </table>
     </div>
 
-    <!-- DISTRIBUTION -->
-    <div class='summary-section'>
-        <div class='section-title'>💰 DISTRIBUTION</div>
-        <div class='distribution'>
-            <div class='dist-item'>
-                <div class='dist-label'>60% Share</div>
-                <div class='dist-value'>₱" . number_format($closing['organizer_share'], 2) . "</div>
-            </div>
-            <div class='dist-item'>
-                <div class='dist-label'>40% Share</div>
-                <div class='dist-value'>₱" . number_format($closing['barangay_share'], 2) . "</div>
-            </div>
-        </div>
-    </div>
-
-    <div style='text-align: center; margin-top: 30px; color: #999; font-size: 12px;'>
-        <p>Generated: " . date('Y-m-d H:i:s') . "</p>
-        <p>Kantayoktok Sporting and Cockpit Arena Daily Monitoring System</p>
-    </div>
-
+    <script>
+        window.onload = function () {
+            setTimeout(function () {
+                window.print();
+            }, 200);
+        };
+    </script>
 </body>
-</html>";
+</html>
+";
 
-// Output as file download
 header('Content-Type: text/html; charset=utf-8');
 header('Content-Disposition: attachment; filename="Kantayoktok-Daily-Report-' . $today . '.html"');
 echo $html;
