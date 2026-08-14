@@ -23,15 +23,17 @@ body {
 }
 
 .header-right .refresh-btn {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.76rem;
-    min-width: 90px;
+    width: auto;
+    min-width: 140px;
+    min-height: 48px;
+    padding: 0.8rem 1.25rem;
+    font-size: 0.96rem;
     line-height: 1.1;
-    border-radius: 10px;
+    border-radius: 14px;
     box-shadow: 0 7px 14px rgba(15, 23, 42, 0.08);
     background: linear-gradient(135deg, #f8fafc 0%, #edf4ff 100%);
     border: 1px solid rgba(15, 23, 42, 0.08);
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .header-right {
@@ -49,7 +51,9 @@ body {
 .header-right {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .user-info {
@@ -94,7 +98,7 @@ select, input {
 }
 
 button {
-    width: 100%;
+    width: auto;
     padding: 0.9rem 1rem;
     background: linear-gradient(135deg, #f9efd0 0%, #f5e2a7 100%);
     color: var(--navy-900);
@@ -193,6 +197,37 @@ button:hover {
     background: white;
 }
 
+.custom-name-row .record-amount-group {
+    grid-template-columns: 1.5fr 1fr;
+}
+
+.custom-label-field label {
+    margin: 0 0 0.35rem;
+}
+
+.custom-row-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+}
+
+.add-custom-row-btn {
+    margin: 0;
+    min-width: 180px;
+    background: linear-gradient(135deg, #fff7d6 0%, #fce7a6 100%);
+    color: #6b4f00;
+}
+
+.remove-custom-row-btn {
+    grid-column: 1 / -1;
+    justify-self: end;
+    margin: 0;
+    padding: 0.5rem 0.8rem;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
 .helper-text {
     color: #666;
     font-size: 13px;
@@ -210,7 +245,8 @@ button:hover {
 .save-btn, .secondary-btn {
     width: auto;
     min-width: 180px;
-    padding: 0.9rem 1.2rem;
+    min-height: 48px;
+    padding: 0.8rem 1.25rem;
     border: 1px solid rgba(15, 23, 42, 0.08);
     border-radius: 12px;
     cursor: pointer;
@@ -229,14 +265,18 @@ button:hover {
 }
 
 .status-badge {
-    display: inline-block;
-    padding: 0.45rem 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0.45rem 0.9rem;
     border-radius: 999px;
     font-size: 12px;
+    line-height: 1;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    margin-top: 0.75rem;
+    margin: 0;
 }
 
 .status-open {
@@ -307,11 +347,20 @@ button:hover {
         grid-template-columns: 1fr;
     }
 
+    .custom-category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .custom-category-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
     .save-bar {
         flex-direction: column;
     }
 
-    .save-btn, .secondary-btn {
+    .save-btn, .secondary-btn, .refresh-btn, .logout-btn {
         width: 100%;
     }
 }
