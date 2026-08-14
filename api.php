@@ -153,6 +153,31 @@ elseif ($action === 'save_finance_batch') {
     }
 }
 
+elseif ($action === 'get_finance_categories') {
+    requireRole('cashier');
+
+    echo json_encode([
+        'success' => true,
+        'income' => getFinanceCategories('income'),
+        'expense' => getFinanceCategories('expense'),
+    ]);
+}
+
+elseif ($action === 'add_finance_category') {
+    requireRole('cashier');
+
+    $type = strtolower(trim((string) ($_POST['type'] ?? '')));
+    $name = trim((string) ($_POST['name'] ?? ''));
+
+    if (!in_array($type, ['income', 'expense'], true) || $name === '') {
+        echo json_encode(['success' => false, 'error' => 'Invalid category name or type.']);
+    } elseif (addFinanceCategory($type, $name)) {
+        echo json_encode(['success' => true, 'message' => 'Category added.']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Category could not be added.']);
+    }
+}
+
 elseif ($action === 'close_day') {
     requireRole('admin');
 
