@@ -66,7 +66,7 @@ $history_summary = getDailySummaryForDate($selected_date);
                 <div class="metric-value" id="metric-expenses">₱<?php echo number_format(($financials['direct_expenses'] + $financials['operational_expenses']), 0); ?></div>
             </div>
 
-            <div class="metric-card card-profit">
+            <div class="metric-card card-profit metric-card-long">
                 <h3>Net Profit</h3>
                 <div class="metric-value" id="metric-profit">₱<?php echo number_format($financials['net_income'], 0); ?></div>
             </div>
@@ -253,7 +253,7 @@ $history_summary = getDailySummaryForDate($selected_date);
                             <div class="history-label">Exits</div>
                             <div class="history-value"><?php echo $history_summary['exits']; ?></div>
                         </div>
-                        <div class="history-card">
+                        <div class="history-card history-card-wide">
                             <div class="history-label">Net Income</div>
                             <div class="history-value">₱<?php echo number_format($history_summary['net_income'], 2); ?></div>
                         </div>
