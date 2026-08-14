@@ -13,6 +13,8 @@ $default_pulta_total = $default_pulta_qty * 100;
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Finance Recording - Kantayoktok Sporting and Cockpit Arena</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="cashier.css">
@@ -25,7 +27,7 @@ $default_pulta_total = $default_pulta_qty * 100;
                 <p class="user-info">Logged in as: <strong><?php echo $_SESSION['full_name']; ?></strong></p>
                 <p style="font-size: 12px; color: #999; margin-top: 0.5rem;">Last updated: <span id="last-updated">now</span></p>
             </div>
-            <div class="header-right" style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+            <div class="header-right">
                 <p class="status-badge <?php echo ($day_status === 'closed') ? 'status-closed' : 'status-open'; ?>"><?php echo ($day_status === 'closed') ? 'Day Closed' : 'Day Open'; ?></p>
                 <button type="button" class="refresh-btn" onclick="window.location.reload()">↻ Refresh</button>
                 <a href="logout.php" class="logout-btn">🚪 Logout</a>

@@ -46,6 +46,8 @@ if (isset($_SESSION['user_id'])) {
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Kantayoktok Sporting and Cockpit Arena | Daily Monitoring System</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="login.css">

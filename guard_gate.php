@@ -9,6 +9,8 @@ $headcount = getTodayHeadcount();
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Gate Entry - Kantayoktok Sporting and Cockpit Arena</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="guard.css">

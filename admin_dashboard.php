@@ -14,6 +14,8 @@ $history_summary = getDailySummaryForDate($selected_date);
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Admin Dashboard - Kantayoktok Sporting and Cockpit Arena</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="admin.css">

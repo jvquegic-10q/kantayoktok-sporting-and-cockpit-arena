@@ -24,12 +24,14 @@
 
 html {
     scroll-behavior: smooth;
+    font-size: clamp(14px, 0.7vw + 0.75rem, 18px);
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #edf3ff 0%, #f9f5ee 100%);
     color: var(--navy-900);
+    min-height: 100vh;
 }
 
 img {
@@ -51,10 +53,10 @@ a:hover {
 }
 
 .container {
-    width: min(100%, 1200px);
-    max-width: 1200px;
+    width: min(100%, 1180px);
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: clamp(0.75rem, 1.25vw, 1.5rem);
 }
 
 .brand-shell {
