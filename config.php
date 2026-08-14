@@ -118,6 +118,74 @@ function getTodayEventStatus() {
     return $row['status'] ?? 'ongoing';
 }
 
+function ensureFinanceCategoryTable() {
+    global $conn;
+
+    $sql = "CREATE TABLE IF NOT EXISTS finance_categories (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        type ENUM('income', 'expense') NOT NULL,
+        name VARCHAR(120) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY unique_finance_category (type, name)
+    )";
+
+    return $conn->query($sql);
+}
+
+ensureFinanceCategoryTable();
+
+function getFinanceCategories($type) {
+    global $conn;
+
+    $type = strtolower(trim((string) $type));
+    if (!in_array($type, ['income', 'expense'], true)) {
+        return [];
+    }
+
+    $default_categories = [
+        'income' => ['sultada', 'pulta', 'dresser', 'tax_admin', 'parking', 'space_rental', 'other'],
+        'expense' => ['amusement_tax', 'permit', 'payroll', 'meals', 'fuel', 'materials', 'utilities', 'labor', 'promo']
+    ];
+
+    $result = $conn->query("SELECT name FROM finance_categories WHERE type = '$type' ORDER BY name ASC");
+    $custom_categories = [];
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $custom_categories[] = trim((string) $row['name']);
+        }
+    }
+
+    $all = [];
+    foreach ($default_categories[$type] as $category) {
+        $all[] = ucfirst(str_replace('_', ' ', $category));
+    }
+
+    foreach ($custom_categories as $category) {
+        if ($category !== '' && !in_array($category, $all, true)) {
+            $all[] = $category;
+        }
+    }
+
+    return $all;
+}
+
+function addFinanceCategory($type, $name) {
+    global $conn;
+
+    $type = strtolower(trim((string) $type));
+    $name = trim((string) $name);
+
+    if (!in_array($type, ['income', 'expense'], true) || $name === '') {
+        return false;
+    }
+
+    $safe_type = $conn->real_escape_string($type);
+    $safe_name = $conn->real_escape_string($name);
+
+    $result = $conn->query("INSERT IGNORE INTO finance_categories (type, name) VALUES ('$safe_type', '$safe_name')");
+    return $result !== false;
+}
+
 function getEventByDate($event_date) {
     global $conn;
     $safe_date = $conn->real_escape_string($event_date);
@@ -230,6 +298,9 @@ function buildFinancialSummary(array $income_data, array $expense_data, $beginni
     $normalized_income = array_map($normalize, $income_data);
     $normalized_expenses = array_map($normalize, $expense_data);
 
+    $known_income_categories = ['sultada', 'pulta', 'dresser', 'tax_admin', 'parking', 'space_rental', 'other'];
+    $known_expense_categories = ['amusement_tax', 'permit', 'payroll', 'meals', 'fuel', 'materials', 'utilities', 'labor', 'promo'];
+
     $additional_income_categories = ['dresser', 'tax_admin', 'parking', 'space_rental', 'other'];
     $direct_expense_categories = ['amusement_tax', 'permit', 'payroll', 'meals'];
     $operational_expense_categories = ['fuel', 'materials', 'utilities', 'labor', 'promo'];
@@ -243,6 +314,12 @@ function buildFinancialSummary(array $income_data, array $expense_data, $beginni
         $additional_income += (float) ($normalized_income[$category] ?? 0.0);
     }
 
+    foreach ($normalized_income as $category => $amount) {
+        if (!in_array($category, $known_income_categories, true)) {
+            $additional_income += (float) $amount;
+        }
+    }
+
     $direct_expenses = 0.0;
     foreach ($direct_expense_categories as $category) {
         $direct_expenses += (float) ($normalized_expenses[$category] ?? 0.0);
@@ -251,6 +328,12 @@ function buildFinancialSummary(array $income_data, array $expense_data, $beginni
     $operational_expenses = 0.0;
     foreach ($operational_expense_categories as $category) {
         $operational_expenses += (float) ($normalized_expenses[$category] ?? 0.0);
+    }
+
+    foreach ($normalized_expenses as $category => $amount) {
+        if (!in_array($category, $known_expense_categories, true)) {
+            $operational_expenses += (float) $amount;
+        }
     }
 
     $gross_cash = $beginning_balance + $sultada_net + $pulta_total;
@@ -297,8 +380,8 @@ function getTodayFinancials() {
     $total_income = 0;
     if ($income_result) {
         while ($row = $income_result->fetch_assoc()) {
-            $income_data[$row['category']] = $row['total'];
-            $total_income += $row['total'];
+            $income_data[$row['category']] = (float) $row['total'];
+            $total_income += (float) $row['total'];
         }
     }
     
@@ -308,8 +391,8 @@ function getTodayFinancials() {
     $total_expenses = 0;
     if ($expense_result) {
         while ($row = $expense_result->fetch_assoc()) {
-            $expense_data[$row['category']] = $row['total'];
-            $total_expenses += $row['total'];
+            $expense_data[$row['category']] = (float) $row['total'];
+            $total_expenses += (float) $row['total'];
         }
     }
 
