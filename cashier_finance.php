@@ -56,7 +56,7 @@ $default_pulta_total = $default_pulta_qty * 100;
         </div>
 
         <form id="financeForm" onsubmit="event.preventDefault(); saveFinanceList();">
-            <div class="section">
+                <div class="section">
                 <h2>🏁 Beginning Balance</h2>
                 <div class="record-row">
                     <div class='record-label'>Beginning Balance (Previous day COH)</div>
@@ -67,7 +67,7 @@ $default_pulta_total = $default_pulta_qty * 100;
             <div class="section">
                 <h2>💵 Income Categories</h2>
                 <div class="helper-text">Only amounts above zero will be saved.</div>
-                <div class="record-list">
+                <div class="record-list" id="income-record-list">
                     <?php
                     $income_labels = [
                         'sultada' => ['label' => 'Sultada (Bet)', 'type' => 'total'],
@@ -75,8 +75,7 @@ $default_pulta_total = $default_pulta_qty * 100;
                         'dresser' => ['label' => 'Dresser Fees', 'type' => 'total'],
                         'tax_admin' => ['label' => 'Tax/Admin (per Manok)', 'type' => 'qty_rate'],
                         'parking' => ['label' => 'Parking Fee', 'type' => 'qty_rate'],
-                        'space_rental' => ['label' => 'Space Rental', 'type' => 'qty_rate'],
-                        'other' => ['label' => 'Other Income', 'type' => 'total']
+                        'space_rental' => ['label' => 'Space Rental', 'type' => 'qty_rate']
                     ];
                     foreach ($income_labels as $key => $meta) {
                         $label = $meta['label'];
@@ -100,6 +99,24 @@ $default_pulta_total = $default_pulta_qty * 100;
 
                         echo "</div>";
                     }
+
+                    $custom_income_labels = getFinanceCategories('income');
+                    foreach ($custom_income_labels as $custom_label) {
+                        $normalized = strtolower(str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9_]+/', '', $custom_label)));
+                        $category_key = $normalized !== '' ? $normalized : 'new_income_item';
+                        $value = isset($financials['income'][$category_key]) ? number_format($financials['income'][$category_key], 2, '.', '') : '';
+                        if (in_array($category_key, ['sultada', 'pulta', 'dresser', 'tax_admin', 'parking', 'space_rental', 'other'], true)) {
+                            continue;
+                        }
+                        echo "<div class='record-row'>";
+                        echo "<div class='record-label'>$custom_label</div>";
+                        echo "<input class='record-input' type='number' name='income[$category_key]' min='0' step='0.01' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
+                        echo "</div>";
+                    }
+
+                    echo "<div class='custom-row-actions'>";
+                    echo "<button type='button' class='add-custom-row-btn' data-type='income'>+ New Income Item</button>";
+                    echo "</div>";
                     ?>
                 </div>
             </div>
@@ -107,7 +124,7 @@ $default_pulta_total = $default_pulta_qty * 100;
             <div class="section">
                 <h2>📉 Expense Categories</h2>
                 <div class="helper-text">Edit any amount and save to replace all current expense totals for today.</div>
-                <div class="record-list">
+                <div class="record-list" id="expense-record-list">
                     <?php
                     $expense_labels = [
                         'amusement_tax' => 'Amusement Tax (10%)',
@@ -127,6 +144,24 @@ $default_pulta_total = $default_pulta_qty * 100;
                         echo "<input class='record-input' type='number' name='expense[$key]' min='0' step='0.01' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
                         echo "</div>";
                     }
+
+                    $custom_expense_labels = getFinanceCategories('expense');
+                    foreach ($custom_expense_labels as $custom_label) {
+                        $normalized = strtolower(str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9_]+/', '', $custom_label)));
+                        $category_key = $normalized !== '' ? $normalized : 'new_expense_item';
+                        $value = isset($financials['expenses'][$category_key]) ? number_format($financials['expenses'][$category_key], 2, '.', '') : '';
+                        if (in_array($category_key, ['amusement_tax', 'permit', 'payroll', 'meals', 'fuel', 'materials', 'utilities', 'labor', 'promo'], true)) {
+                            continue;
+                        }
+                        echo "<div class='record-row'>";
+                        echo "<div class='record-label'>$custom_label</div>";
+                        echo "<input class='record-input' type='number' name='expense[$category_key]' min='0' step='0.01' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
+                        echo "</div>";
+                    }
+
+                    echo "<div class='custom-row-actions'>";
+                    echo "<button type='button' class='add-custom-row-btn' data-type='expense'>+ New Expense Item</button>";
+                    echo "</div>";
                     ?>
                 </div>
 
@@ -162,6 +197,83 @@ $default_pulta_total = $default_pulta_qty * 100;
     </div>
 
     <script>
+    function slugifyCategory(value) {
+        return String(value || '')
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '_')
+            .replace(/^_+|_+$/g, '') || 'custom_item';
+    }
+
+    function buildCategoryKey(value) {
+        return String(value || '')
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '_')
+            .replace(/^_+|_+$/g, '') || 'custom_item';
+    }
+
+    function syncCustomEntryName(input) {
+        const type = input.dataset.type;
+        const amountInput = input.closest('.custom-name-row')?.querySelector('.custom-amount-input');
+        if (!amountInput) return;
+
+        const name = input.value.trim();
+        if (!name) {
+            amountInput.name = `${type}[new_${type}_item]`;
+            return;
+        }
+
+        const key = buildCategoryKey(name);
+        amountInput.name = `${type}[${key}]`;
+    }
+
+    function createCustomRow(type) {
+        const row = document.createElement('div');
+        row.className = 'record-row custom-name-row';
+        row.innerHTML = `
+            <div class='record-label'>${type === 'income' ? 'New Income Item' : 'New Expense Item'}</div>
+            <div class='record-amount-group'>
+                <div class='record-inline-field custom-label-field'>
+                    <label>Label</label>
+                    <input class='record-input custom-label-input' type='text' data-type='${type}' placeholder='${type === 'income' ? 'Collectibles' : 'Subscription'}'>
+                </div>
+                <div class='record-inline-field'>
+                    <label>Amount</label>
+                    <input class='record-input custom-amount-input' type='number' data-type='${type}' name='${type}[new_${type}_item]' min='0' step='0.01' value='' placeholder='0.00'>
+                </div>
+            </div>
+        `;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-custom-row-btn';
+        removeBtn.textContent = 'Remove';
+        removeBtn.setAttribute('aria-label', 'Remove custom row');
+        removeBtn.addEventListener('click', () => row.remove());
+        row.appendChild(removeBtn);
+
+        return row;
+    }
+
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('.add-custom-row-btn');
+        if (!button) return;
+
+        const type = button.dataset.type;
+        const list = document.getElementById(type === 'income' ? 'income-record-list' : 'expense-record-list');
+        if (!list) return;
+
+        list.insertBefore(createCustomRow(type), button.parentElement);
+    });
+
+    document.addEventListener('input', function (event) {
+        const target = event.target;
+        if (target.classList && target.classList.contains('custom-label-input')) {
+            syncCustomEntryName(target);
+        }
+    });
+
     function syncQtyRateTotal(rowKey) {
         const qtyInput = document.querySelector(`.qty-input[data-row="${rowKey}"]`);
         const rateInput = document.querySelector(`.rate-input[data-row="${rowKey}"]`);
@@ -271,6 +383,39 @@ $default_pulta_total = $default_pulta_qty * 100;
         }
 
         try {
+            const customIncomeInputs = form.querySelectorAll('.custom-label-input[data-type="income"]');
+            const customExpenseInputs = form.querySelectorAll('.custom-label-input[data-type="expense"]');
+
+            for (const input of customIncomeInputs) {
+                const name = input.value.trim();
+                if (name) {
+                    const response = await fetch('api.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: `action=add_finance_category&type=income&name=${encodeURIComponent(name)}`
+                    });
+                    const result = await response.json();
+                    if (!result.success) {
+                        console.error('Unable to save custom income category:', result.error || 'unknown error');
+                    }
+                }
+            }
+
+            for (const input of customExpenseInputs) {
+                const name = input.value.trim();
+                if (name) {
+                    const response = await fetch('api.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: `action=add_finance_category&type=expense&name=${encodeURIComponent(name)}`
+                    });
+                    const result = await response.json();
+                    if (!result.success) {
+                        console.error('Unable to save custom expense category:', result.error || 'unknown error');
+                    }
+                }
+            }
+
             const incomeInputs = form.querySelectorAll('input[name^="income["]');
             const expenseInputs = form.querySelectorAll('input[name^="expense["]');
             const income = {};
