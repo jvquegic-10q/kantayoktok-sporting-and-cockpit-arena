@@ -62,7 +62,7 @@ $default_pulta_total = $default_pulta_qty * 100;
                 <h2>🏁 Beginning Balance</h2>
                 <div class="record-row">
                     <div class='record-label'>Beginning Balance (Previous day COH)</div>
-                    <input class='record-input' type='number' name='beginning_balance' min='0' step='0.01' value='<?php echo number_format(DEFAULT_BEGINNING_BALANCE, 2, '.', ''); ?>' placeholder='0.00'>
+                    <input class='record-input' type='text' inputmode='decimal' data-format='money' name='beginning_balance' value='<?php echo number_format(DEFAULT_BEGINNING_BALANCE, 2); ?>' placeholder='0.00'>
                 </div>
             </div>
 
@@ -82,21 +82,21 @@ $default_pulta_total = $default_pulta_qty * 100;
                     foreach ($income_labels as $key => $meta) {
                         $label = $meta['label'];
                         $type = $meta['type'];
-                        $value = isset($financials['income'][$key]) ? number_format($financials['income'][$key], 2, '.', '') : '';
+                        $value = isset($financials['income'][$key]) ? number_format($financials['income'][$key], 2) : '';
                         echo "<div class='record-row'>";
                         echo "<div class='record-label'>$label</div>";
 
                         if ($type === 'qty_rate') {
-                            $default_rate = ($key === 'pulta') ? '100' : '';
-                            $default_qty = ($key === 'pulta') ? htmlspecialchars((string) $default_pulta_qty, ENT_QUOTES) : '';
-                            $default_total = ($key === 'pulta') ? number_format($default_pulta_total, 2, '.', '') : $value;
+                            $default_rate = ($key === 'pulta') ? '100.00' : '';
+                            $default_qty = ($key === 'pulta') ? number_format($default_pulta_qty) : '';
+                            $default_total = ($key === 'pulta') ? number_format($default_pulta_total, 2) : $value;
                             echo "<div class='record-amount-group'>";
-                            echo "<div class='record-inline-field'><label>Qty</label><input class='record-input qty-input' type='number' min='0' step='1' data-row='$key' data-kind='qty' placeholder='0' value='" . $default_qty . "' " . ($key === 'pulta' ? 'readonly' : '') . "></div>";
-                            echo "<div class='record-inline-field'><label>Rate</label><input class='record-input rate-input' type='number' min='0' step='0.01' data-row='$key' data-kind='rate' placeholder='0.00' value='" . htmlspecialchars($default_rate, ENT_QUOTES) . "'></div>";
-                            echo "<div class='record-inline-field'><label>Total</label><input class='record-input total-input' type='number' name='income[$key]' min='0' step='0.01' value='" . htmlspecialchars($default_total, ENT_QUOTES) . "' placeholder='0.00'></div>";
+                            echo "<div class='record-inline-field'><label>Qty</label><input class='record-input qty-input' type='text' inputmode='numeric' data-format='int' data-row='$key' data-kind='qty' placeholder='0' value='" . $default_qty . "' " . ($key === 'pulta' ? 'readonly' : '') . "></div>";
+                            echo "<div class='record-inline-field'><label>Rate</label><input class='record-input rate-input' type='text' inputmode='decimal' data-format='money' data-row='$key' data-kind='rate' placeholder='0.00' value='" . htmlspecialchars($default_rate, ENT_QUOTES) . "'></div>";
+                            echo "<div class='record-inline-field'><label>Total</label><input class='record-input total-input' type='text' inputmode='decimal' data-format='money' name='income[$key]' value='" . htmlspecialchars($default_total, ENT_QUOTES) . "' placeholder='0.00'></div>";
                             echo "</div>";
                         } else {
-                            echo "<input class='record-input' type='number' name='income[$key]' min='0' step='0.01' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
+                            echo "<input class='record-input' type='text' inputmode='decimal' data-format='money' name='income[$key]' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
                         }
 
                         echo "</div>";
@@ -106,13 +106,13 @@ $default_pulta_total = $default_pulta_qty * 100;
                     foreach ($custom_income_labels as $custom_label) {
                         $normalized = strtolower(str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9_]+/', '', $custom_label)));
                         $category_key = $normalized !== '' ? $normalized : 'new_income_item';
-                        $value = isset($financials['income'][$category_key]) ? number_format($financials['income'][$category_key], 2, '.', '') : '';
+                        $value = isset($financials['income'][$category_key]) ? number_format($financials['income'][$category_key], 2) : '';
                         if (in_array($category_key, ['sultada', 'pulta', 'dresser', 'tax_admin', 'parking', 'space_rental', 'other'], true)) {
                             continue;
                         }
                         echo "<div class='record-row'>";
                         echo "<div class='record-label'>$custom_label</div>";
-                        echo "<input class='record-input' type='number' name='income[$category_key]' min='0' step='0.01' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
+                        echo "<input class='record-input' type='text' inputmode='decimal' data-format='money' name='income[$category_key]' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
                         echo "</div>";
                     }
 
@@ -140,10 +140,10 @@ $default_pulta_total = $default_pulta_qty * 100;
                         'promo' => 'Promo'
                     ];
                     foreach ($expense_labels as $key => $label) {
-                        $value = isset($financials['expenses'][$key]) ? number_format($financials['expenses'][$key], 2, '.', '') : '';
+                        $value = isset($financials['expenses'][$key]) ? number_format($financials['expenses'][$key], 2) : '';
                         echo "<div class='record-row'>";
                         echo "<div class='record-label'>$label</div>";
-                        echo "<input class='record-input' type='number' name='expense[$key]' min='0' step='0.01' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
+                        echo "<input class='record-input' type='text' inputmode='decimal' data-format='money' name='expense[$key]' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
                         echo "</div>";
                     }
 
@@ -151,13 +151,13 @@ $default_pulta_total = $default_pulta_qty * 100;
                     foreach ($custom_expense_labels as $custom_label) {
                         $normalized = strtolower(str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9_]+/', '', $custom_label)));
                         $category_key = $normalized !== '' ? $normalized : 'new_expense_item';
-                        $value = isset($financials['expenses'][$category_key]) ? number_format($financials['expenses'][$category_key], 2, '.', '') : '';
+                        $value = isset($financials['expenses'][$category_key]) ? number_format($financials['expenses'][$category_key], 2) : '';
                         if (in_array($category_key, ['amusement_tax', 'permit', 'payroll', 'meals', 'fuel', 'materials', 'utilities', 'labor', 'promo'], true)) {
                             continue;
                         }
                         echo "<div class='record-row'>";
                         echo "<div class='record-label'>$custom_label</div>";
-                        echo "<input class='record-input' type='number' name='expense[$category_key]' min='0' step='0.01' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
+                        echo "<input class='record-input' type='text' inputmode='decimal' data-format='money' name='expense[$category_key]' value='" . htmlspecialchars($value, ENT_QUOTES) . "' placeholder='0.00'>";
                         echo "</div>";
                     }
 
@@ -215,6 +215,46 @@ $default_pulta_total = $default_pulta_qty * 100;
             .replace(/^_+|_+$/g, '') || 'custom_item';
     }
 
+    function formatGroupedDigits(digits) {
+        return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function formatNumericValue(rawValue, mode) {
+        if (typeof rawValue !== 'string') return rawValue;
+        let value = rawValue.replace(/,/g, '').replace(/[^\d.]/g, '');
+        if (value === '') return '';
+        if (mode === 'int') {
+            return formatGroupedDigits(value.split('.')[0]);
+        }
+        const firstDot = value.indexOf('.');
+        if (firstDot === -1) {
+            return formatGroupedDigits(value);
+        }
+        const whole = value.slice(0, firstDot);
+        const decimals = value.slice(firstDot + 1).replace(/\./g, '').slice(0, 2);
+        if (whole === '' && decimals === '') return '';
+        return formatGroupedDigits(whole) + '.' + decimals;
+    }
+
+    function parseNumber(rawValue) {
+        const cleaned = String(rawValue || '').replace(/,/g, '').trim();
+        if (cleaned === '' || cleaned === '.') return NaN;
+        const value = Number(cleaned);
+        return Number.isFinite(value) ? value : NaN;
+    }
+
+    function setFormattedInputValue(input, numericValue, mode) {
+        if (!input) return;
+        const number = Number(numericValue);
+        if (numericValue === '' || numericValue === null || numericValue === undefined || !Number.isFinite(number)) {
+            input.value = '';
+            return;
+        }
+        input.value = mode === 'int'
+            ? Math.trunc(number).toLocaleString('en-US')
+            : number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     function syncCustomEntryName(input) {
         const type = input.dataset.type;
         const amountInput = input.closest('.custom-name-row')?.querySelector('.custom-amount-input');
@@ -242,7 +282,7 @@ $default_pulta_total = $default_pulta_qty * 100;
                 </div>
                 <div class='record-inline-field'>
                     <label>Amount</label>
-                    <input class='record-input custom-amount-input' type='number' data-type='${type}' name='${type}[new_${type}_item]' min='0' step='0.01' value='' placeholder='0.00'>
+                    <input class='record-input custom-amount-input' type='text' inputmode='decimal' data-format='money' data-type='${type}' name='${type}[new_${type}_item]' value='' placeholder='0.00'>
                 </div>
             </div>
         `;
@@ -274,6 +314,9 @@ $default_pulta_total = $default_pulta_qty * 100;
         if (target.classList && target.classList.contains('custom-label-input')) {
             syncCustomEntryName(target);
         }
+        if (target.dataset && target.dataset.format) {
+            target.value = formatNumericValue(target.value, target.dataset.format);
+        }
     });
 
     function syncQtyRateTotal(rowKey) {
@@ -283,9 +326,9 @@ $default_pulta_total = $default_pulta_qty * 100;
 
         if (!qtyInput || !rateInput || !totalInput) return;
 
-        const qty = Number(qtyInput.value || 0);
-        const rate = Number(rateInput.value || 0);
-        totalInput.value = (qty * rate).toFixed(2);
+        const qty = parseNumber(qtyInput.value) || 0;
+        const rate = parseNumber(rateInput.value) || 0;
+        setFormattedInputValue(totalInput, qty * rate, 'money');
     }
 
     document.addEventListener('input', function (event) {
@@ -312,11 +355,11 @@ $default_pulta_total = $default_pulta_qty * 100;
                 // Update Pulta Qty (auto-sync with guard entries)
                 const pultaQtyInput = document.querySelector('.qty-input[data-row="pulta"]');
                 if (pultaQtyInput) {
-                    const currentQty = Number(pultaQtyInput.value) || 0;
+                    const currentQty = parseNumber(pultaQtyInput.value) || 0;
                     const newQty = hc.entries || 0;
                     
                     if (currentQty !== newQty) {
-                        pultaQtyInput.value = newQty;
+                        setFormattedInputValue(pultaQtyInput, newQty, 'int');
                         syncQtyRateTotal('pulta');
                     }
                 }
@@ -354,13 +397,13 @@ $default_pulta_total = $default_pulta_qty * 100;
         const pultaTotal = document.querySelector('.total-input[name="income[pulta]"]');
 
         if (pultaQty) {
-            pultaQty.value = '<?php echo (int) $default_pulta_qty; ?>';
+            setFormattedInputValue(pultaQty, <?php echo (int) $default_pulta_qty; ?>, 'int');
         }
         if (pultaRate) {
-            pultaRate.value = '100';
+            setFormattedInputValue(pultaRate, 100, 'money');
         }
         if (pultaTotal) {
-            pultaTotal.value = '<?php echo number_format($default_pulta_total, 2, '.', ''); ?>';
+            setFormattedInputValue(pultaTotal, <?php echo number_format($default_pulta_total, 2, '.', ''); ?>, 'money');
         }
     }
 
@@ -426,7 +469,7 @@ $default_pulta_total = $default_pulta_qty * 100;
             let hasValidEntry = false;
 
             incomeInputs.forEach(input => {
-                const value = Number(input.value);
+                const value = parseNumber(input.value);
                 if (input.value.trim() !== '' && Number.isFinite(value) && value >= 0) {
                     if (value > 0) {
                         income[input.name.replace(/^income\[|\]$/g, '')] = value;
@@ -440,7 +483,7 @@ $default_pulta_total = $default_pulta_qty * 100;
             });
 
             expenseInputs.forEach(input => {
-                const value = Number(input.value);
+                const value = parseNumber(input.value);
                 if (input.value.trim() !== '' && Number.isFinite(value) && value >= 0) {
                     if (value > 0) {
                         expense[input.name.replace(/^expense\[|\]$/g, '')] = value;
