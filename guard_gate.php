@@ -30,7 +30,7 @@ $headcount = getTodayHeadcount();
 
         <div class="big-counter">
             <div class="counter-label">People Inside Now</div>
-            <div class="counter-value" id="counter"><?php echo $headcount['inside']; ?></div>
+            <div class="counter-value" id="counter"><?php echo number_format($headcount['inside']); ?></div>
         </div>
 
         <div class="action-controls">
@@ -50,15 +50,15 @@ $headcount = getTodayHeadcount();
         <div class="stats">
             <div class="stat-box">
                 <div class="stat-label">First Entries</div>
-                <div class="stat-value" id="entries"><?php echo $headcount['entries']; ?></div>
+                <div class="stat-value" id="entries"><?php echo number_format($headcount['entries']); ?></div>
             </div>
             <div class="stat-box">
                 <div class="stat-label">Re-entries</div>
-                <div class="stat-value" id="reentries"><?php echo $headcount['reentries']; ?></div>
+                <div class="stat-value" id="reentries"><?php echo number_format($headcount['reentries']); ?></div>
             </div>
             <div class="stat-box">
                 <div class="stat-label">Total Exited</div>
-                <div class="stat-value" id="exits"><?php echo $headcount['exits']; ?></div>
+                <div class="stat-value" id="exits"><?php echo number_format($headcount['exits']); ?></div>
             </div>
         </div>
 
@@ -98,7 +98,7 @@ $headcount = getTodayHeadcount();
         pendingAction = { action, quantity };
 
         document.getElementById('modalTitle').textContent = 'Confirm action';
-        document.getElementById('modalMessage').textContent = `${quantity} ${noun} will ${actionLabel}?`;
+        document.getElementById('modalMessage').textContent = `${quantity.toLocaleString('en-US')} ${noun} will ${actionLabel}?`;
         document.getElementById('confirmModal').style.display = 'flex';
     }
 
@@ -130,10 +130,10 @@ $headcount = getTodayHeadcount();
 
             const data = await response.json();
             if (data.success) {
-                document.getElementById('counter').textContent = data.inside;
-                document.getElementById('entries').textContent = data.entries;
-                document.getElementById('reentries').textContent = data.reentries;
-                document.getElementById('exits').textContent = data.exits;
+                document.getElementById('counter').textContent = Number(data.inside).toLocaleString('en-US');
+                document.getElementById('entries').textContent = Number(data.entries).toLocaleString('en-US');
+                document.getElementById('reentries').textContent = Number(data.reentries).toLocaleString('en-US');
+                document.getElementById('exits').textContent = Number(data.exits).toLocaleString('en-US');
 
                 const counter = document.querySelector('.big-counter');
                 const colorMap = {
