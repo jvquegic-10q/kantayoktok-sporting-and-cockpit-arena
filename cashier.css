@@ -6,10 +6,10 @@ body {
 }
 
 .container {
-    width: min(94vw, 980px);
-    max-width: 980px;
+    width: min(96vw, 1100px);
+    max-width: 1100px;
     margin: 0 auto;
-    padding: clamp(10px, 1vw, 18px);
+    padding: clamp(10px, 1.2vw, 20px);
 }
 
 .header {
@@ -58,7 +58,7 @@ body {
     margin: 0;
 }
 
-.status-badge {
+.header .status-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -73,12 +73,12 @@ body {
     margin: 0;
 }
 
-.status-open {
+.header .status-open {
     background: rgba(40, 167, 69, 0.14);
     color: #d9fbe6;
 }
 
-.status-closed {
+.header .status-closed {
     background: rgba(255, 193, 7, 0.18);
     color: #fff3b0;
 }
@@ -147,11 +147,19 @@ label {
 
 select, input {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid #d5dbe5;
+    border-radius: 10px;
+    font-size: 16px;
     box-sizing: border-box;
+    background: #fff;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+select:focus, input:focus {
+    outline: none;
+    border-color: var(--focus-ring, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
 }
 
 button {
@@ -173,11 +181,12 @@ button:hover {
 }
 
 .summary-box {
-    background: #f0f0f0;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     padding: 1rem;
-    border-radius: 4px;
+    border-radius: 12px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1rem;
     margin: 1rem 0;
 }
@@ -248,9 +257,9 @@ button:hover {
 .record-input {
     width: 100%;
     padding: 0.7rem 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
+    border: 1px solid #d5dbe5;
+    border-radius: 10px;
+    font-size: 16px;
     background: white;
 }
 
@@ -424,7 +433,11 @@ button:hover {
 
 @media (max-width: 480px) {
     .container {
-        padding: 0.25rem;
+        padding: 0.5rem;
+    }
+
+    .summary-box {
+        grid-template-columns: 1fr;
     }
 
     .section {
