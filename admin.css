@@ -6,10 +6,10 @@ body {
 }
 
 .container {
-    width: min(94vw, 980px);
-    max-width: 980px;
+    width: min(96vw, 1280px);
+    max-width: 1280px;
     margin: 0 auto;
-    padding: clamp(10px, 1vw, 18px);
+    padding: clamp(10px, 1.2vw, 20px);
 }
 
 .header {
@@ -54,14 +54,15 @@ body {
 
 .metric-card {
     background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
     border-left: 4px solid #667eea;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 150px;
+    gap: 0.35rem;
+    min-height: 132px;
 }
 
 .metric-card h3 {
@@ -72,15 +73,12 @@ body {
 }
 
 .metric-value {
-    font-size: 36px;
-    font-weight: bold;
+    font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+    font-weight: 800;
     color: #333;
     margin-top: auto;
-}
-
-.metric-card-long {
-    grid-column: 1 / -1;
-    min-height: 120px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
 }
 
 .metric-subtext {
@@ -119,7 +117,7 @@ body {
 
 h2 {
     color: #333;
-    font-size: 18px;
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
     margin-bottom: 1rem;
     border-bottom: 2px solid #f0f0f0;
     padding-bottom: 0.5rem;
@@ -270,7 +268,7 @@ h2 {
 
 .history-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 0.8rem;
 }
 
@@ -289,27 +287,6 @@ h2 {
 .history-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 22px rgba(15, 23, 42, 0.08);
-}
-
-.history-card-wide {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 72px;
-    border-left-width: 4px;
-}
-
-.history-card-wide .history-label {
-    margin: 0;
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    font-weight: 800;
-}
-
-.history-card-wide .history-value {
-    font-size: 30px;
-    font-weight: 800;
 }
 
 .history-label {
@@ -340,9 +317,6 @@ h2 {
 
 .btn-soft {
     min-height: 48px;
-}
-
-.btn-soft {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -419,9 +393,10 @@ h2 {
 }
 
 .closing-value {
-    font-size: 28px;
+    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
     font-weight: 700;
     color: #0f172a;
+    overflow-wrap: anywhere;
 }
 
 .closing-positive { color: #1e7e34; }
@@ -456,17 +431,13 @@ h2 {
 
 @media (max-width: 480px) {
     .container {
-        padding: 0.25rem;
+        padding: 0.5rem;
     }
 
     .metric-card,
     .section,
     .closing-card {
         padding: 1rem;
-    }
-
-    .metric-value {
-        font-size: 28px;
     }
 
     .category-row,
