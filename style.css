@@ -11,8 +11,13 @@
     --slate-100: #f1f5f9;
     --slate-200: #e2e8f0;
     --slate-500: #64748b;
+    --slate-600: #475569;
     --success: #1f8f44;
     --danger: #c62828;
+    --focus-ring: #2563eb;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
     --shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
 }
 
@@ -50,6 +55,12 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.55);
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 .container {
@@ -131,6 +142,8 @@ a.btn {
     color: var(--navy-900);
     background: linear-gradient(135deg, #edf2f7 0%, #f8fafc 100%);
     box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .btn-base:hover,
@@ -288,10 +301,11 @@ a.logout-btn:hover {
 }
 
 .metric-value {
-    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
     font-weight: 800;
     color: var(--navy-900);
     line-height: 1.2;
+    overflow-wrap: anywhere;
 }
 
 .metric-subtext {
@@ -339,5 +353,19 @@ a.logout-btn:hover {
     button,
     a.btn {
         width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
