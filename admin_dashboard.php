@@ -52,8 +52,8 @@ $history_summary = getDailySummaryForDate($selected_date);
         <div class="metrics">
             <div class="metric-card card-inside">
                 <h3>People Inside</h3>
-                <div class="metric-value" id="metric-inside"><?php echo $headcount['inside']; ?></div>
-                <div class="metric-subtext">Entries: <span id="metric-entries"><?php echo $headcount['entries']; ?></span> | Exits: <span id="metric-exits"><?php echo $headcount['exits']; ?></span></div>
+                <div class="metric-value" id="metric-inside"><?php echo number_format($headcount['inside']); ?></div>
+                <div class="metric-subtext">Entries: <span id="metric-entries"><?php echo number_format($headcount['entries']); ?></span> | Exits: <span id="metric-exits"><?php echo number_format($headcount['exits']); ?></span></div>
             </div>
 
             <div class="metric-card card-in">
@@ -66,7 +66,7 @@ $history_summary = getDailySummaryForDate($selected_date);
                 <div class="metric-value" id="metric-expenses">₱<?php echo number_format(($financials['direct_expenses'] + $financials['operational_expenses']), 0); ?></div>
             </div>
 
-            <div class="metric-card card-profit metric-card-long">
+            <div class="metric-card card-profit">
                 <h3>Net Profit</h3>
                 <div class="metric-value" id="metric-profit">₱<?php echo number_format($financials['net_income'], 0); ?></div>
             </div>
@@ -239,21 +239,21 @@ $history_summary = getDailySummaryForDate($selected_date);
                         </div>
                         <div class="history-card">
                             <div class="history-label">Inside</div>
-                            <div class="history-value"><?php echo $history_summary['inside']; ?></div>
+                            <div class="history-value"><?php echo number_format($history_summary['inside']); ?></div>
                         </div>
                         <div class="history-card">
                             <div class="history-label">Entries</div>
-                            <div class="history-value"><?php echo $history_summary['entries']; ?></div>
+                            <div class="history-value"><?php echo number_format($history_summary['entries']); ?></div>
                         </div>
                         <div class="history-card">
                             <div class="history-label">Re-entries</div>
-                            <div class="history-value"><?php echo $history_summary['reentries']; ?></div>
+                            <div class="history-value"><?php echo number_format($history_summary['reentries']); ?></div>
                         </div>
                         <div class="history-card">
                             <div class="history-label">Exits</div>
-                            <div class="history-value"><?php echo $history_summary['exits']; ?></div>
+                            <div class="history-value"><?php echo number_format($history_summary['exits']); ?></div>
                         </div>
-                        <div class="history-card history-card-wide">
+                        <div class="history-card">
                             <div class="history-label">Net Income</div>
                             <div class="history-value">₱<?php echo number_format($history_summary['net_income'], 2); ?></div>
                         </div>
@@ -289,9 +289,9 @@ $history_summary = getDailySummaryForDate($selected_date);
                 const clos = data.closing || {};
                 
                 // Update headcount metrics
-                document.getElementById('metric-inside').textContent = hc.inside;
-                document.getElementById('metric-entries').textContent = hc.entries;
-                document.getElementById('metric-exits').textContent = hc.exits;
+                document.getElementById('metric-inside').textContent = (hc.inside || 0).toLocaleString('en-US');
+                document.getElementById('metric-entries').textContent = (hc.entries || 0).toLocaleString('en-US');
+                document.getElementById('metric-exits').textContent = (hc.exits || 0).toLocaleString('en-US');
                 
                 // Update financial metrics
                 document.getElementById('metric-gross').textContent = '₱' + (fin.gross_cash || 0).toLocaleString('en-US', {maximumFractionDigits: 0});
