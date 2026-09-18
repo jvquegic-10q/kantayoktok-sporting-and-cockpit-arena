@@ -6,6 +6,10 @@
     --gold-500: #d4af37;
     --gold-600: #c89b2d;
     --gold-700: #b8860b;
+    --gold-300: #f7e7a2;
+    --gold-200: #f9efd0;
+    --gold-100: #fdf6e3;
+    --gold-grad: linear-gradient(135deg, #f7e08c 0%, #d4af37 55%, #b8860b 100%);
     --cream: #f8f5ef;
     --white: #ffffff;
     --slate-100: #f1f5f9;
@@ -173,9 +177,16 @@ a.btn:hover {
 .gold-btn,
 .primary-btn,
 .save-btn {
-    background: linear-gradient(135deg, #f9efd0 0%, #f5e2a7 100%);
+    background: var(--gold-grad);
     color: var(--navy-900);
-    border-color: rgba(184, 134, 11, 0.2);
+    border-color: rgba(184, 134, 11, 0.35);
+    box-shadow: 0 10px 24px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.gold-btn:hover,
+.primary-btn:hover,
+.save-btn:hover {
+    box-shadow: 0 14px 32px rgba(212, 175, 55, 0.45), inset 0 1px 0 rgba(255,255,255,0.6);
 }
 
 .secondary-btn {
@@ -207,9 +218,9 @@ a.logout-btn {
     align-items: center !important;
     justify-content: center !important;
     gap: 0.6rem !important;
-    background: linear-gradient(135deg, #f7e7a2 0%, #f0c94b 35%, #d9a611 100%) !important;
+    background: linear-gradient(135deg, #fbeaa6 0%, #f0c94b 40%, #c8940f 100%) !important;
     color: #0f172a !important;
-    border: 2px solid rgba(15, 23, 42, 0.12) !important;
+    border: 2px solid rgba(184, 134, 11, 0.35) !important;
     border-radius: 14px !important;
     padding: 0.8rem 1.25rem !important;
     min-height: 48px !important;
