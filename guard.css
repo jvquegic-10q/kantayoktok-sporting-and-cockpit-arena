@@ -21,7 +21,7 @@ body {
 }
 
 .header {
-    background: linear-gradient(135deg, #14213d 0%, #24406f 100%);
+    background: linear-gradient(135deg, #14213d 0%, #1d3557 60%, #6b5310 130%);
     color: white;
     display: flex;
     justify-content: space-between;
@@ -31,6 +31,7 @@ body {
     padding: 14px 18px;
     border-radius: 20px;
     box-shadow: 0 16px 36px rgba(15, 23, 42, 0.24);
+    border-bottom: 3px solid var(--gold-500, #d4af37);
     min-height: 78px;
     position: relative;
     overflow: hidden;
@@ -77,14 +78,25 @@ h1 {
 }
 
 .big-counter {
-    background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #3a2f0c 55%, #6b5310 120%);
     color: white;
     padding: 1.2rem 1rem 1rem;
     border-radius: 20px;
     text-align: center;
     margin-bottom: 1rem;
-    box-shadow: 0 20px 48px rgba(29, 78, 216, 0.28);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.3);
     animation: fadeUp 0.5s var(--ease, ease) 0.06s both;
+}
+
+.counter-value {
+    font-size: clamp(3rem, 9vw, 6rem);
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(180deg, #fbeaa6, #d4af37);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .counter-value {
