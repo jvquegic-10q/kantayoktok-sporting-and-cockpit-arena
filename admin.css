@@ -1,6 +1,10 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7ff 0%, #eef9f5 100%);
+    background:
+        radial-gradient(1000px 560px at 10% -6%, rgba(212, 175, 55, 0.16), transparent 55%),
+        radial-gradient(880px 520px at 105% 10%, rgba(102, 126, 234, 0.12), transparent 55%),
+        linear-gradient(135deg, #f7f4ff 0%, #fdf6e8 100%);
+    background-attachment: fixed;
     padding: 0;
     min-height: 100vh;
 }
@@ -13,12 +17,13 @@ body {
 }
 
 .header {
-    background: linear-gradient(135deg, #1c2440 0%, #2f4b7c 100%);
+    background: linear-gradient(135deg, #14213d 0%, #1d3557 60%, #6b5310 130%);
     color: white;
     padding: 1.5rem;
     border-radius: var(--radius-lg, 20px);
     margin-bottom: 1.5rem;
     box-shadow: 0 16px 40px rgba(28, 36, 64, 0.25);
+    border-bottom: 3px solid var(--gold-500, #d4af37);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -113,7 +118,17 @@ body {
 .card-inside { border-left-color: #667eea; }
 .card-in { border-left-color: #28a745; }
 .card-out { border-left-color: #dc3545; }
-.card-profit { border-left-color: #ffc107; background: #fffbf0; }
+.card-profit {
+    border-left-color: var(--gold-500, #d4af37);
+    background: linear-gradient(135deg, #fffdf4 0%, #fdf3d0 100%);
+    border-top: 1px solid rgba(212, 175, 55, 0.35);
+    border-right: 1px solid rgba(212, 175, 55, 0.3);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.card-profit .metric-value {
+    color: var(--gold-700, #b8860b);
+}
 
 .sections {
     display: grid;
@@ -146,10 +161,10 @@ body {
 }
 
 h2 {
-    color: #333;
+    color: #2a2113;
     font-size: clamp(1.05rem, 1.4vw, 1.25rem);
     margin-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.5);
     padding-bottom: 0.5rem;
 }
 
@@ -172,13 +187,13 @@ h2 {
     gap: 1rem;
     padding: 1rem 0;
     margin-top: auto;
-    border-top: 2px solid #333;
-    border-bottom: 2px solid #333;
+    border-top: 2px solid var(--gold-600, #c89b2d);
+    border-bottom: 2px solid var(--gold-600, #c89b2d);
     font-weight: bold;
     font-size: 16px;
 }
 
-.total-row .category-value { color: #667eea; }
+.total-row .category-value { color: var(--gold-700, #b8860b); }
 
 .history-section {
     background: linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%);
