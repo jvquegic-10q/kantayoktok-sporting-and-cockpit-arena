@@ -29,9 +29,12 @@ body {
     gap: 0.75rem;
     margin-bottom: 1rem;
     padding: 14px 18px;
-    border-radius: 16px;
-    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+    border-radius: 20px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.24);
     min-height: 78px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s var(--ease, ease) both;
 }
 
 h1 {
@@ -77,10 +80,11 @@ h1 {
     background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
     color: white;
     padding: 1.2rem 1rem 1rem;
-    border-radius: 16px;
+    border-radius: 20px;
     text-align: center;
     margin-bottom: 1rem;
-    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
+    box-shadow: 0 20px 48px rgba(29, 78, 216, 0.28);
+    animation: fadeUp 0.5s var(--ease, ease) 0.06s both;
 }
 
 .counter-value {
@@ -155,17 +159,27 @@ h1 {
     font-size: 15px;
     font-weight: 800;
     border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform 0.25s var(--ease, ease), box-shadow 0.25s var(--ease, ease), filter 0.25s var(--ease, ease);
     color: var(--navy-900);
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.09);
     min-height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     line-height: 1.2;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+    filter: brightness(1.03);
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.98);
 }
 
 .btn-enter {
