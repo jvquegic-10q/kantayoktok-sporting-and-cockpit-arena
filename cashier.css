@@ -13,12 +13,13 @@ body {
 }
 
 .header {
-    background: linear-gradient(135deg, #1f2a44 0%, #2f4b7c 100%);
+    background: linear-gradient(135deg, #14213d 0%, #1d3557 60%, #6b5310 130%);
     color: white;
     padding: 1rem 1.25rem;
     border-radius: 20px;
     margin-bottom: 1.5rem;
     box-shadow: 0 16px 40px rgba(31, 42, 68, 0.28);
+    border-bottom: 3px solid var(--gold-500, #d4af37);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -145,8 +146,8 @@ body {
 }
 
 h2 {
-    color: #333;
-    border-bottom: 2px solid #667eea;
+    color: #2a2113;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.5);
     padding-bottom: 0.5rem;
     margin-bottom: 1rem;
 }
@@ -175,21 +176,21 @@ select, input {
 
 select:focus, input:focus {
     outline: none;
-    border-color: var(--focus-ring, #2563eb);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+    border-color: var(--gold-500, #d4af37);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
 }
 
 button {
     width: auto;
     padding: 0.9rem 1rem;
-    background: linear-gradient(135deg, #f9efd0 0%, #f5e2a7 100%);
+    background: var(--gold-grad, linear-gradient(135deg, #f9efd0 0%, #f5e2a7 100%));
     color: var(--navy-900);
-    border: 1px solid rgba(184, 134, 11, 0.18);
+    border: 1px solid rgba(184, 134, 11, 0.3);
     border-radius: 12px;
     cursor: pointer;
     font-weight: 700;
     margin: 0;
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.28), inset 0 1px 0 rgba(255,255,255,0.5);
 }
 
 button:hover {
