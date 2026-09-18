@@ -270,6 +270,9 @@ $history_summary = getDailySummaryForDate($selected_date);
                 <button class="btn-soft btn-primary" onclick="exportPDF()">📄 Export PDF</button>
                 <button class="btn-soft btn-primary" onclick="exportExcel()">📊 Export Excel</button>
                 <button class="btn-soft btn-warning" onclick="startDemoDay()">▶ Start Demo Day</button>
+                <?php if (getTodayEventStatus() === 'closed'): ?>
+                <button class="btn-soft btn-primary" onclick="reopenDay()">🔓 Reopen Day</button>
+                <?php endif; ?>
                 <button class="btn-soft btn-primary" onclick="closeDay()">🔒 Close Day</button>
                 <button class="btn-soft btn-danger" onclick="resetDemoData()">🧹 Reset Demo Records</button>
             </div>
@@ -429,6 +432,32 @@ $history_summary = getDailySummaryForDate($selected_date);
         })
         .catch(() => {
             alert('Failed to close the day.');
+        });
+    }
+
+    function reopenDay() {
+        if (!confirm('Reopen today for new entries?')) {
+            return;
+        }
+
+        fetch('api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'action=reopen_day'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message || 'Day reopened.');
+                location.reload();
+            } else {
+                alert(data.error || 'Unable to reopen the day.');
+            }
+        })
+        .catch(() => {
+            alert('Failed to reopen the day.');
         });
     }
     </script>
