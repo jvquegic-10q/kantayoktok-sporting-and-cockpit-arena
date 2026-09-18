@@ -8,6 +8,7 @@ $day_status = getTodayEventStatus();
 $guard_entry_count = getTodayHeadcount()['entries'];
 $default_pulta_qty = max(0, (int) $guard_entry_count);
 $default_pulta_total = $default_pulta_qty * 100;
+$beginning_balance_value = number_format((float) $financials['beginning_balance'], 2);
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +63,7 @@ $default_pulta_total = $default_pulta_qty * 100;
                 <h2>🏁 Beginning Balance</h2>
                 <div class="record-row">
                     <div class='record-label'>Beginning Balance (Previous day COH)</div>
-                    <input class='record-input' type='text' inputmode='decimal' data-format='money' name='beginning_balance' value='<?php echo number_format(DEFAULT_BEGINNING_BALANCE, 2); ?>' placeholder='0.00'>
+                    <input class='record-input' type='text' inputmode='decimal' data-format='money' name='beginning_balance' value='<?php echo $beginning_balance_value; ?>' placeholder='0.00'>
                 </div>
             </div>
 
@@ -501,15 +502,25 @@ $default_pulta_total = $default_pulta_qty * 100;
                 return;
             }
 
+            const beginningBalanceInput = form.querySelector('input[name="beginning_balance"]');
+            const beginningBalance = beginningBalanceInput ? parseNumber(beginningBalanceInput.value) : NaN;
+            if (beginningBalanceInput && beginningBalanceInput.value.trim() !== '' && (!Number.isFinite(beginningBalance) || beginningBalance < 0)) {
+                alert('Please enter a valid non-negative beginning balance.');
+                beginningBalanceInput.focus();
+                throw new Error('Invalid beginning balance');
+            }
+
             const confirmed = confirm('Save these values as today\'s official financial record? This will replace the current daily totals.');
             if (!confirmed) {
                 return;
             }
 
+            const balancePayload = Number.isFinite(beginningBalance) ? beginningBalance : 0;
+
             const response = await fetch('api.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `action=save_finance_batch&income=${encodeURIComponent(JSON.stringify(income))}&expense=${encodeURIComponent(JSON.stringify(expense))}`
+                body: `action=save_finance_batch&income=${encodeURIComponent(JSON.stringify(income))}&expense=${encodeURIComponent(JSON.stringify(expense))}&beginning_balance=${encodeURIComponent(balancePayload)}`
             });
 
             const data = await response.json();
