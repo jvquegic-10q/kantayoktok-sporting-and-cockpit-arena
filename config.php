@@ -21,8 +21,66 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Default beginning balance for the venue report view.
-// This can be replaced by the previous day's cash-on-hand value when the app is fully integrated.
+// Used only when no prior day's cash-on-hand is available.
 define('DEFAULT_BEGINNING_BALANCE', 0);
+
+// Each event stores its own beginning balance (cash-on-hand carried in).
+ensureEventBalanceColumn();
+
+function ensureEventBalanceColumn() {
+    global $conn;
+
+    $result = $conn->query("SHOW COLUMNS FROM events LIKE 'beginning_balance'");
+    if ($result && $result->num_rows > 0) {
+        return true;
+    }
+
+    return $conn->query("ALTER TABLE events ADD COLUMN beginning_balance DECIMAL(12,2) NOT NULL DEFAULT 0.00 AFTER status") !== false;
+}
+
+// Previous day's cash-on-hand = that day's net income (fallback to default).
+function getPreviousDayCashOnHand($current_date) {
+    global $conn;
+
+    $safe_date = $conn->real_escape_string($current_date);
+    $result = $conn->query("SELECT event_date FROM events WHERE event_date < '$safe_date' ORDER BY event_date DESC LIMIT 1");
+
+    if (!$result || $result->num_rows === 0) {
+        return DEFAULT_BEGINNING_BALANCE;
+    }
+
+    $row = $result->fetch_assoc();
+    $summary = getDailySummaryForDate($row['event_date']);
+
+    return $summary ? (float) $summary['net_income'] : DEFAULT_BEGINNING_BALANCE;
+}
+
+function getEventBeginningBalance($event_id) {
+    global $conn;
+    $event_id = (int) $event_id;
+    $result = $conn->query("SELECT event_date, beginning_balance FROM events WHERE id = $event_id LIMIT 1");
+
+    if (!$result || $result->num_rows === 0) {
+        return DEFAULT_BEGINNING_BALANCE;
+    }
+
+    $row = $result->fetch_assoc();
+
+    // Auto-carry the previous day's cash-on-hand until a value is explicitly saved.
+    if ((float) $row['beginning_balance'] === 0.0) {
+        return getPreviousDayCashOnHand($row['event_date']);
+    }
+
+    return (float) $row['beginning_balance'];
+}
+
+function setEventBeginningBalance($event_id, $amount) {
+    global $conn;
+    $event_id = (int) $event_id;
+    $amount = (float) $amount;
+
+    return $conn->query("UPDATE events SET beginning_balance = $amount WHERE id = $event_id") !== false;
+}
 
 // Check if user is logged in
 function requireLogin() {
@@ -207,6 +265,7 @@ function getDailySummaryForDate($event_date) {
     }
 
     $event_id = (int) $event['id'];
+    $beginning_balance = getEventBeginningBalance($event_id);
 
     $attendance_result = $conn->query("SELECT type, COUNT(*) as count FROM attendance WHERE event_id = $event_id GROUP BY type");
     $attendance_counts = ['entry' => 0, 'reentry' => 0, 'exit' => 0];
@@ -235,7 +294,7 @@ function getDailySummaryForDate($event_date) {
         }
     }
 
-    $summary = buildFinancialSummary($income_data, $expense_data, DEFAULT_BEGINNING_BALANCE);
+    $summary = buildFinancialSummary($income_data, $expense_data, $beginning_balance);
     $entries = $attendance_counts['entry'];
     $reentries = $attendance_counts['reentry'];
     $exits = $attendance_counts['exit'];
@@ -249,6 +308,7 @@ function getDailySummaryForDate($event_date) {
         'inside' => max(0, $entries + $reentries - $exits),
         'income' => $income_data,
         'expenses' => $expense_data,
+        'beginning_balance' => $summary['beginning_balance'],
         'total_income' => $summary['total_income'],
         'total_expenses' => $summary['total_expenses'],
         'net_income' => $summary['net_income'],
@@ -281,6 +341,13 @@ function getRecentDailySummaries($days = 7) {
     }
 
     return $results;
+}
+
+function reopenTodayEvent() {
+    global $conn;
+    $event_id = getTodayEvent();
+    $result = $conn->query("UPDATE events SET status = 'ongoing' WHERE id = $event_id");
+    return $result;
 }
 
 function closeTodayEvent() {
@@ -363,7 +430,7 @@ function buildFinancialSummary(array $income_data, array $expense_data, $beginni
 
 function getTodayClosingSummary() {
     $financials = getTodayFinancials();
-    $summary = buildFinancialSummary($financials['income'], $financials['expenses'], DEFAULT_BEGINNING_BALANCE);
+    $summary = buildFinancialSummary($financials['income'], $financials['expenses'], $financials['beginning_balance']);
     $summary['status'] = getTodayEventStatus();
 
     return $summary;
@@ -396,7 +463,7 @@ function getTodayFinancials() {
         }
     }
 
-    $summary = buildFinancialSummary($income_data, $expense_data, DEFAULT_BEGINNING_BALANCE);
+    $summary = buildFinancialSummary($income_data, $expense_data, getEventBeginningBalance($event_id));
 
     return [
         'event_id' => $event_id,
@@ -499,9 +566,11 @@ function resetTodayDemoData() {
     return true;
 }
 
-function replaceTodayFinanceBatch($income_data, $expense_data) {
+function replaceTodayFinanceBatch($income_data, $expense_data, $beginning_balance = null) {
     global $conn;
     $event_id = getTodayEvent();
+
+    $conn->begin_transaction();
 
     $delete_queries = [
         "DELETE FROM income WHERE event_id = $event_id",
@@ -510,6 +579,7 @@ function replaceTodayFinanceBatch($income_data, $expense_data) {
 
     foreach ($delete_queries as $sql) {
         if (!$conn->query($sql)) {
+            $conn->rollback();
             return false;
         }
     }
@@ -522,6 +592,7 @@ function replaceTodayFinanceBatch($income_data, $expense_data) {
             $safe_category = $conn->real_escape_string($category);
             $sql = "INSERT INTO income (event_id, category, amount) VALUES ($event_id, '$safe_category', $amount)";
             if (!$conn->query($sql)) {
+                $conn->rollback();
                 return false;
             }
         }
@@ -535,11 +606,18 @@ function replaceTodayFinanceBatch($income_data, $expense_data) {
             $safe_category = $conn->real_escape_string($category);
             $sql = "INSERT INTO expenses (event_id, category, amount) VALUES ($event_id, '$safe_category', $amount)";
             if (!$conn->query($sql)) {
+                $conn->rollback();
                 return false;
             }
         }
     }
 
+    if ($beginning_balance !== null && !setEventBeginningBalance($event_id, $beginning_balance)) {
+        $conn->rollback();
+        return false;
+    }
+
+    $conn->commit();
     return true;
 }
 ?>
