@@ -49,52 +49,6 @@ if ($action === 'add_entry') {
     }
 }
 
-// RECORD INCOME 
-elseif ($action === 'record_income') {
-    $category = trim((string) ($_POST['category'] ?? ''));
-    $amount_raw = $_POST['amount'] ?? 0;
-    $amount = is_numeric($amount_raw) ? floatval($amount_raw) : NAN;
-    $event_id = getTodayEvent();
-
-    if (getTodayEventStatus() === 'closed') {
-        echo json_encode(['success' => false, 'error' => 'This day has already been closed.']);
-    } elseif ($category !== '' && is_finite($amount) && $amount >= 0 && $amount <= 9999999999) {
-        $safe_category = $conn->real_escape_string($category);
-        $result = $conn->query("INSERT INTO income (event_id, category, amount) VALUES ($event_id, '$safe_category', $amount)");
-
-        if ($result) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'error' => $conn->error]);
-        }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Invalid amount or category. Use a valid non-negative value.']);
-    }
-}
-
-// RECORD EXPENSE
-elseif ($action === 'record_expense') {
-    $category = trim((string) ($_POST['category'] ?? ''));
-    $amount_raw = $_POST['amount'] ?? 0;
-    $amount = is_numeric($amount_raw) ? floatval($amount_raw) : NAN;
-    $event_id = getTodayEvent();
-
-    if (getTodayEventStatus() === 'closed') {
-        echo json_encode(['success' => false, 'error' => 'This day has already been closed.']);
-    } elseif ($category !== '' && is_finite($amount) && $amount >= 0 && $amount <= 9999999999) {
-        $safe_category = $conn->real_escape_string($category);
-        $result = $conn->query("INSERT INTO expenses (event_id, category, amount) VALUES ($event_id, '$safe_category', $amount)");
-
-        if ($result) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'error' => $conn->error]);
-        }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Invalid amount or category. Use a valid non-negative value.']);
-    }
-}
-
 // RESET DEMO DATA (Admin only)
 elseif ($action === 'reset_demo_data') {
     requireRole('admin');
@@ -137,6 +91,8 @@ elseif ($action === 'save_finance_batch') {
     } else {
         $income_data = json_decode($_POST['income'] ?? '[]', true);
         $expense_data = json_decode($_POST['expense'] ?? '[]', true);
+        $beginning_balance_raw = $_POST['beginning_balance'] ?? null;
+        $beginning_balance = is_numeric($beginning_balance_raw) ? max(0, floatval($beginning_balance_raw)) : null;
 
         if (!is_array($income_data)) {
             $income_data = [];
@@ -145,7 +101,7 @@ elseif ($action === 'save_finance_batch') {
             $expense_data = [];
         }
 
-        if (replaceTodayFinanceBatch($income_data, $expense_data)) {
+        if (replaceTodayFinanceBatch($income_data, $expense_data, $beginning_balance)) {
             echo json_encode(['success' => true, 'message' => 'Finance records saved successfully.']);
         } else {
             echo json_encode(['success' => false, 'error' => 'Unable to save finance records.']);
@@ -185,6 +141,16 @@ elseif ($action === 'close_day') {
         echo json_encode(['success' => true, 'message' => 'Today has been closed successfully.']);
     } else {
         echo json_encode(['success' => false, 'error' => 'Unable to close the day.']);
+    }
+}
+
+elseif ($action === 'reopen_day') {
+    requireRole('admin');
+
+    if (reopenTodayEvent()) {
+        echo json_encode(['success' => true, 'message' => 'Today has been reopened.']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Unable to reopen the day.']);
     }
 }
 
