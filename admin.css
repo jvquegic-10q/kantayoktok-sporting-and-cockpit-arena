@@ -16,13 +16,24 @@ body {
     background: linear-gradient(135deg, #1c2440 0%, #2f4b7c 100%);
     color: white;
     padding: 1.5rem;
-    border-radius: 14px;
+    border-radius: var(--radius-lg, 20px);
     margin-bottom: 1.5rem;
-    box-shadow: 0 10px 25px rgba(28, 36, 64, 0.14);
+    box-shadow: 0 16px 40px rgba(28, 36, 64, 0.25);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s var(--ease, ease) both;
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), transparent 45%);
+    pointer-events: none;
 }
 
 .header-left h1 {
@@ -53,16 +64,28 @@ body {
 }
 
 .metric-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
     padding: 1.25rem 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.09);
+    border: 1px solid rgba(15, 23, 42, 0.06);
     border-left: 4px solid #667eea;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 0.35rem;
     min-height: 132px;
+    transition: transform 0.28s var(--ease, ease), box-shadow 0.28s var(--ease, ease);
+    animation: fadeUp 0.55s var(--ease, ease) both;
+}
+
+.metric-card:nth-child(2) { animation-delay: 0.06s; }
+.metric-card:nth-child(3) { animation-delay: 0.12s; }
+.metric-card:nth-child(4) { animation-delay: 0.18s; }
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.15);
 }
 
 .metric-card h3 {
@@ -100,12 +123,19 @@ body {
 }
 
 .section {
-    background: white;
+    background: rgba(255, 255, 255, 0.88);
     padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
     display: flex;
     flex-direction: column;
+    animation: fadeUp 0.5s var(--ease, ease) 0.1s both;
+    transition: box-shadow 0.28s var(--ease, ease);
+}
+
+.section:hover {
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.13);
 }
 
 #income-breakdown,
